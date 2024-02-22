@@ -1,5 +1,5 @@
 /**
- *Submitted for verification at BscScan.com on 2022-03-23
+ *Submitted for verification at BscScan.com on 2024-02-22
 */
 
 // File: @openzeppelin/contracts-ethereum-package/contracts/utils/SafeCast.sol
@@ -35,7 +35,7 @@ library SafeCast {
      * - input must fit into 128 bits
      */
     function toUint128(uint256 value) internal pure returns (uint128) {
-        require(value < 2**128, "SafeCast: value doesn\'t fit in 128 bits");
+        require(value < 2 ** 128, "SafeCast: value doesn\'t fit in 128 bits");
         return uint128(value);
     }
 
@@ -50,7 +50,7 @@ library SafeCast {
      * - input must fit into 64 bits
      */
     function toUint64(uint256 value) internal pure returns (uint64) {
-        require(value < 2**64, "SafeCast: value doesn\'t fit in 64 bits");
+        require(value < 2 ** 64, "SafeCast: value doesn\'t fit in 64 bits");
         return uint64(value);
     }
 
@@ -65,7 +65,7 @@ library SafeCast {
      * - input must fit into 32 bits
      */
     function toUint32(uint256 value) internal pure returns (uint32) {
-        require(value < 2**32, "SafeCast: value doesn\'t fit in 32 bits");
+        require(value < 2 ** 32, "SafeCast: value doesn\'t fit in 32 bits");
         return uint32(value);
     }
 
@@ -80,7 +80,7 @@ library SafeCast {
      * - input must fit into 16 bits
      */
     function toUint16(uint256 value) internal pure returns (uint16) {
-        require(value < 2**16, "SafeCast: value doesn\'t fit in 16 bits");
+        require(value < 2 ** 16, "SafeCast: value doesn\'t fit in 16 bits");
         return uint16(value);
     }
 
@@ -95,7 +95,7 @@ library SafeCast {
      * - input must fit into 8 bits.
      */
     function toUint8(uint256 value) internal pure returns (uint8) {
-        require(value < 2**8, "SafeCast: value doesn\'t fit in 8 bits");
+        require(value < 2 ** 8, "SafeCast: value doesn\'t fit in 8 bits");
         return uint8(value);
     }
 
@@ -119,7 +119,7 @@ library SafeCast {
      * - input must be less than or equal to maxInt256.
      */
     function toInt256(uint256 value) internal pure returns (int256) {
-        require(value < 2**255, "SafeCast: value doesn't fit in an int256");
+        require(value < 2 ** 255, "SafeCast: value doesn't fit in an int256");
         return int256(value);
     }
 }
@@ -143,50 +143,50 @@ pragma solidity >=0.4.24 <0.7.0;
  */
 contract Initializable {
 
-  /**
-   * @dev Indicates that the contract has been initialized.
+    /**
+     * @dev Indicates that the contract has been initialized.
    */
-  bool private initialized;
+    bool private initialized;
 
-  /**
-   * @dev Indicates that the contract is in the process of being initialized.
+    /**
+     * @dev Indicates that the contract is in the process of being initialized.
    */
-  bool private initializing;
+    bool private initializing;
 
-  /**
-   * @dev Modifier to use in the initializer function of a contract.
+    /**
+     * @dev Modifier to use in the initializer function of a contract.
    */
-  modifier initializer() {
-    require(initializing || isConstructor() || !initialized, "Contract instance has already been initialized");
+    modifier initializer() {
+        require(initializing || isConstructor() || !initialized, "Contract instance has already been initialized");
 
-    bool isTopLevelCall = !initializing;
-    if (isTopLevelCall) {
-      initializing = true;
-      initialized = true;
+        bool isTopLevelCall = !initializing;
+        if (isTopLevelCall) {
+            initializing = true;
+            initialized = true;
+        }
+
+        _;
+
+        if (isTopLevelCall) {
+            initializing = false;
+        }
     }
 
-    _;
-
-    if (isTopLevelCall) {
-      initializing = false;
+    /// @dev Returns true if and only if the function is running in the constructor
+    function isConstructor() private view returns (bool) {
+        // extcodesize checks the size of the code stored in an address, and
+        // address returns the current address. Since the code is still not
+        // deployed when running a constructor, any checks on its code size will
+        // yield zero, making it an effective way to detect if a contract is
+        // under construction or not.
+        address self = address(this);
+        uint256 cs;
+        assembly {cs := extcodesize(self)}
+        return cs == 0;
     }
-  }
 
-  /// @dev Returns true if and only if the function is running in the constructor
-  function isConstructor() private view returns (bool) {
-    // extcodesize checks the size of the code stored in an address, and
-    // address returns the current address. Since the code is still not
-    // deployed when running a constructor, any checks on its code size will
-    // yield zero, making it an effective way to detect if a contract is
-    // under construction or not.
-    address self = address(this);
-    uint256 cs;
-    assembly { cs := extcodesize(self) }
-    return cs == 0;
-  }
-
-  // Reserved storage space to allow for layout changes in the future.
-  uint256[50] private ______gap;
+    // Reserved storage space to allow for layout changes in the future.
+    uint256[50] private ______gap;
 }
 
 // File: @openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol
@@ -223,7 +223,8 @@ contract ContextUpgradeSafe is Initializable {
     }
 
     function _msgData() internal view virtual returns (bytes memory) {
-        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
+        this;
+        // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
         return msg.data;
     }
 
@@ -496,7 +497,7 @@ library Address {
         bytes32 codehash;
         bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
         // solhint-disable-next-line no-inline-assembly
-        assembly { codehash := extcodehash(account) }
+        assembly {codehash := extcodehash(account)}
         return (codehash != accountHash && codehash != 0x0);
     }
 
@@ -520,7 +521,7 @@ library Address {
         require(address(this).balance >= amount, "Address: insufficient balance");
 
         // solhint-disable-next-line avoid-low-level-calls, avoid-call-value
-        (bool success, ) = recipient.call{ value: amount }("");
+        (bool success,) = recipient.call{value : amount}("");
         require(success, "Address: unable to send value, recipient may have reverted");
     }
 }
@@ -532,14 +533,23 @@ pragma solidity ^0.6.0;
 
 interface IERC20 {
     function totalSupply() external view returns (uint256);
+
     function decimals() external view returns (uint8);
+
     function symbol() external view returns (string memory);
+
     function name() external view returns (string memory);
+
     function balanceOf(address account) external view returns (uint256);
+
     function transfer(address recipient, uint256 amount) external returns (bool);
+
     function allowance(address _owner, address spender) external view returns (uint256);
+
     function approve(address spender, uint256 amount) external returns (bool);
+
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
@@ -548,20 +558,25 @@ interface IUniswapV2Factory {
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
     function feeTo() external view returns (address);
+
     function feeToSetter() external view returns (address);
 
     function getPair(address tokenA, address tokenB) external view returns (address pair);
+
     function allPairs(uint) external view returns (address pair);
+
     function allPairsLength() external view returns (uint);
 
     function createPair(address tokenA, address tokenB) external returns (address pair);
 
     function setFeeTo(address) external;
+
     function setFeeToSetter(address) external;
 }
 
 interface IUniswapV2Router01 {
     function factory() external pure returns (address);
+
     function WETH() external pure returns (address);
 
     function addLiquidity(
@@ -574,6 +589,7 @@ interface IUniswapV2Router01 {
         address to,
         uint deadline
     ) external returns (uint amountA, uint amountB, uint liquidity);
+
     function addLiquidityETH(
         address token,
         uint amountTokenDesired,
@@ -582,6 +598,7 @@ interface IUniswapV2Router01 {
         address to,
         uint deadline
     ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
+
     function removeLiquidity(
         address tokenA,
         address tokenB,
@@ -591,6 +608,7 @@ interface IUniswapV2Router01 {
         address to,
         uint deadline
     ) external returns (uint amountA, uint amountB);
+
     function removeLiquidityETH(
         address token,
         uint liquidity,
@@ -599,6 +617,7 @@ interface IUniswapV2Router01 {
         address to,
         uint deadline
     ) external returns (uint amountToken, uint amountETH);
+
     function removeLiquidityWithPermit(
         address tokenA,
         address tokenB,
@@ -609,6 +628,7 @@ interface IUniswapV2Router01 {
         uint deadline,
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external returns (uint amountA, uint amountB);
+
     function removeLiquidityETHWithPermit(
         address token,
         uint liquidity,
@@ -618,6 +638,7 @@ interface IUniswapV2Router01 {
         uint deadline,
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external returns (uint amountToken, uint amountETH);
+
     function swapExactTokensForTokens(
         uint amountIn,
         uint amountOutMin,
@@ -625,6 +646,7 @@ interface IUniswapV2Router01 {
         address to,
         uint deadline
     ) external returns (uint[] memory amounts);
+
     function swapTokensForExactTokens(
         uint amountOut,
         uint amountInMax,
@@ -632,25 +654,33 @@ interface IUniswapV2Router01 {
         address to,
         uint deadline
     ) external returns (uint[] memory amounts);
+
     function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline)
-        external
-        payable
-        returns (uint[] memory amounts);
+    external
+    payable
+    returns (uint[] memory amounts);
+
     function swapTokensForExactETH(uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-        external
-        returns (uint[] memory amounts);
+    external
+    returns (uint[] memory amounts);
+
     function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-        external
-        returns (uint[] memory amounts);
+    external
+    returns (uint[] memory amounts);
+
     function swapETHForExactTokens(uint amountOut, address[] calldata path, address to, uint deadline)
-        external
-        payable
-        returns (uint[] memory amounts);
+    external
+    payable
+    returns (uint[] memory amounts);
 
     function quote(uint amountA, uint reserveA, uint reserveB) external pure returns (uint amountB);
+
     function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) external pure returns (uint amountOut);
+
     function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) external pure returns (uint amountIn);
+
     function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);
+
     function getAmountsIn(uint amountOut, address[] calldata path) external view returns (uint[] memory amounts);
 }
 
@@ -664,6 +694,7 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
         address to,
         uint deadline
     ) external returns (uint amountETH);
+
     function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
         address token,
         uint liquidity,
@@ -681,12 +712,14 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
         address to,
         uint deadline
     ) external;
+
     function swapExactETHForTokensSupportingFeeOnTransferTokens(
         uint amountOutMin,
         address[] calldata path,
         address to,
         uint deadline
     ) external payable;
+
     function swapExactTokensForETHSupportingFeeOnTransferTokens(
         uint amountIn,
         uint amountOutMin,
@@ -697,55 +730,55 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
 }
 
 contract LGEWhitelisted is ContextUpgradeSafe {
-    
+
     using SafeMath for uint256;
-    
+
     struct WhitelistRound {
         uint256 duration;
         uint256 amountMax;
         mapping(address => bool) addresses;
         mapping(address => uint256) purchased;
     }
-  
+
     WhitelistRound[] public _lgeWhitelistRounds;
-    
+
     uint256 public _lgeTimestamp;
     address public _lgePairAddress;
-    
+
     address public _whitelister;
-    
+
     event WhitelisterTransferred(address indexed previousWhitelister, address indexed newWhitelister);
-    
-	function __LGEWhitelisted_init() internal initializer {
+
+    function __LGEWhitelisted_init() internal initializer {
         __Context_init_unchained();
         __LGEWhitelisted_init_unchained();
     }
-	
-	function __LGEWhitelisted_init_unchained() internal initializer {
-		_whitelister = _msgSender();
+
+    function __LGEWhitelisted_init_unchained() internal initializer {
+        _whitelister = _msgSender();
 
     }
-    
+
     modifier onlyWhitelister() {
         require(_whitelister == _msgSender(), "Caller is not the whitelister");
         _;
     }
-    
+
     function renounceWhitelister() external onlyWhitelister {
         emit WhitelisterTransferred(_whitelister, address(0));
         _whitelister = address(0);
     }
-    
+
     function transferWhitelister(address newWhitelister) external onlyWhitelister {
         _transferWhitelister(newWhitelister);
     }
-    
+
     function _transferWhitelister(address newWhitelister) internal {
         require(newWhitelister != address(0), "New whitelister is the zero address");
         emit WhitelisterTransferred(_whitelister, newWhitelister);
         _whitelister = newWhitelister;
     }
-    
+
     /*
      * createLGEWhitelist - Call this after initial Token Generation Event (TGE) 
      * 
@@ -754,23 +787,23 @@ contract LGEWhitelisted is ContextUpgradeSafe {
      * amountsMax - array of max amounts (TOKEN decimals) for each whitelist round
      * 
      */
-  
+
     function createLGEWhitelist(address pairAddress, uint256[] calldata durations, uint256[] calldata amountsMax) external onlyWhitelister() {
         require(durations.length == amountsMax.length, "Invalid whitelist(s)");
-        
+
         _lgePairAddress = pairAddress;
-        
-        if(durations.length > 0) {
-            
+
+        if (durations.length > 0) {
+
             delete _lgeWhitelistRounds;
-        
+
             for (uint256 i = 0; i < durations.length; i++) {
                 _lgeWhitelistRounds.push(WhitelistRound(durations[i], amountsMax[i]));
             }
-        
+
         }
     }
-    
+
     /*
      * modifyLGEWhitelistAddresses - Define what addresses are included/excluded from a whitelist round
      * 
@@ -779,22 +812,22 @@ contract LGEWhitelisted is ContextUpgradeSafe {
      * amountMax - max amount (TOKEN decimals) for each whitelist round
      * 
      */
-    
+
     function modifyLGEWhitelist(uint256 index, uint256 duration, uint256 amountMax, address[] calldata addresses, bool enabled) external onlyWhitelister() {
         require(index < _lgeWhitelistRounds.length, "Invalid index");
         require(amountMax > 0, "Invalid amountMax");
 
-        if(duration != _lgeWhitelistRounds[index].duration)
+        if (duration != _lgeWhitelistRounds[index].duration)
             _lgeWhitelistRounds[index].duration = duration;
-        
-        if(amountMax != _lgeWhitelistRounds[index].amountMax)  
+
+        if (amountMax != _lgeWhitelistRounds[index].amountMax)
             _lgeWhitelistRounds[index].amountMax = amountMax;
-        
+
         for (uint256 i = 0; i < addresses.length; i++) {
             _lgeWhitelistRounds[index].addresses[addresses[i]] = enabled;
         }
     }
-    
+
     /*
      *  getLGEWhitelistRound
      *
@@ -808,236 +841,260 @@ contract LGEWhitelisted is ContextUpgradeSafe {
      *  6. how much caller has purchased in current whitelist round
      *
      */
-    
+
     function getLGEWhitelistRound() public view returns (uint256, uint256, uint256, uint256, bool, uint256) {
-        
-        if(_lgeTimestamp > 0) {
-            
+
+        if (_lgeTimestamp > 0) {
+
             uint256 wlCloseTimestampLast = _lgeTimestamp;
-        
+
             for (uint256 i = 0; i < _lgeWhitelistRounds.length; i++) {
-                
+
                 WhitelistRound storage wlRound = _lgeWhitelistRounds[i];
-                
+
                 wlCloseTimestampLast = wlCloseTimestampLast.add(wlRound.duration);
-                if(now <= wlCloseTimestampLast)
+                if (now <= wlCloseTimestampLast)
                     return (i.add(1), wlRound.duration, wlCloseTimestampLast, wlRound.amountMax, wlRound.addresses[_msgSender()], wlRound.purchased[_msgSender()]);
             }
-        
+
         }
-        
+
         return (0, 0, 0, 0, false, 0);
     }
-    
+
     /*
      * _applyLGEWhitelist - internal function to be called initially before any transfers
      * 
      */
-    
+
     function _applyLGEWhitelist(address sender, address recipient, uint256 amount) internal {
-        
-        if(_lgePairAddress == address(0) || _lgeWhitelistRounds.length == 0)
+
+        if (_lgePairAddress == address(0) || _lgeWhitelistRounds.length == 0)
             return;
-        
-        if(_lgeTimestamp == 0 && sender != _lgePairAddress && recipient == _lgePairAddress && amount > 0)
+
+        if (_lgeTimestamp == 0 && sender != _lgePairAddress && recipient == _lgePairAddress && amount > 0)
             _lgeTimestamp = now;
-        
-        if(sender == _lgePairAddress && recipient != _lgePairAddress) {
+
+        if (sender == _lgePairAddress && recipient != _lgePairAddress) {
             //buying
-            
+
             (uint256 wlRoundNumber,,,,,) = getLGEWhitelistRound();
-        
-            if(wlRoundNumber > 0) {
-                
+
+            if (wlRoundNumber > 0) {
+
                 WhitelistRound storage wlRound = _lgeWhitelistRounds[wlRoundNumber.sub(1)];
-                
+
                 require(wlRound.addresses[recipient], "LGE - Buyer is not whitelisted");
-                
+
                 uint256 amountRemaining = 0;
-                
-                if(wlRound.purchased[recipient] < wlRound.amountMax)
+
+                if (wlRound.purchased[recipient] < wlRound.amountMax)
                     amountRemaining = wlRound.amountMax.sub(wlRound.purchased[recipient]);
-    
+
                 require(amount <= amountRemaining, "LGE - Amount exceeds whitelist maximum");
                 wlRound.purchased[recipient] = wlRound.purchased[recipient].add(amount);
-                
+
             }
-            
+
         }
-        
+
     }
-    
+
 }
 
 contract SCAR is IERC20, OwnableUpgradeSafe, LGEWhitelisted {
-    
+
     using SafeMath for uint256;
     using Address for address;
 
-    mapping (address => uint256) private _balances;
+    mapping(address => uint256) private _balances;
 
-    mapping (address => mapping (address => uint256)) private _allowances;
+    mapping(address => mapping(address => uint256)) private _allowances;
 
     uint256 private _totalSupply;
-    
+
     uint256 private _cap;
+    // uint256 private _cap = 1000;
 
     string private _name;
     string private _symbol;
     uint8 private _decimals;
-    
+
     mapping(address => bool) public _feeExcluded;
 
-	uint256 public _feeBurnPct;
-	uint256 public _feeRewardPct;
-	
-	address public _feeRewardAddress;
+    uint256 public _feeBurnPct;
+    uint256 public _feeRewardPct;
 
-	mapping(address => bool) public _pair;
-	
-	address public _router;
-	
-	address[] public _feeRewardSwapPath;
-	
-	mapping(address => bool) private _excluded;
-    
+    address public _feeRewardAddress;
+
+    mapping(address => bool) public _pair;
+
+    address public _router;
+
+    address[] public _feeRewardSwapPath;
+
+    mapping(address => bool) private _excluded;
+
     function initialize(uint256 cap, uint256 feeBurnPct, uint256 feeRewardPct, address feeRewardAddress, address router)
-        public
-        initializer
+    public
+    initializer
     {
         require(cap > 0, "ERC20Capped: cap is 0");
-        
+
         _name = "VELHALLA.io";
         _symbol = "SCAR";
         _decimals = 18;
-        
+
         _cap = cap;
-        
+
+
         __Ownable_init();
-		__LGEWhitelisted_init();
-		
-		IUniswapV2Router02 r = IUniswapV2Router02(router);
-		IUniswapV2Factory f = IUniswapV2Factory(r.factory());
-		
+        __LGEWhitelisted_init();
+
+        IUniswapV2Router02 r = IUniswapV2Router02(router);
+        IUniswapV2Factory f = IUniswapV2Factory(r.factory());
+
         setPair(f.createPair(address(this), r.WETH()), true);
-        
+
         address[] memory feeRewardSwapPath = new address[](2);
-            
+
         feeRewardSwapPath[0] = address(this);
         feeRewardSwapPath[1] = r.WETH();
-		
-		setFees(feeBurnPct, feeRewardPct, feeRewardSwapPath, feeRewardAddress);
-		
-		_router = router;
-		
-		setFeeExcluded(_msgSender(), true);
-		setFeeExcluded(address(this), true);
+
+        setFees(feeBurnPct, feeRewardPct, feeRewardSwapPath, feeRewardAddress);
+
+        _router = router;
+
+        setFeeExcluded(_msgSender(), true);
+        setFeeExcluded(address(this), true);
     }
+
+    // function initOwner() public {
+    //     __Ownable_init();
+    // }
 
     function setRouter(address r) public onlyOwner {
         _router = r;
     }
-    
-    function setExcluded(address[] calldata addresses, bool enabled) public onlyOwner {
+
+    function setExcluded(address[] memory addresses, bool enabled) public onlyOwner {
         for (uint256 i = 0; i < addresses.length; i++) {
             _excluded[addresses[i]] = enabled;
         }
     }
-    
+
     function setFees(uint256 feeBurnPct, uint256 feeRewardPct, address[] memory feeRewardSwapPath, address feeRewardAddress) public onlyOwner {
         require(feeBurnPct.add(feeRewardPct) <= 10000, "Fees must not total more than 100%");
         require(feeRewardSwapPath.length > 1, "Invalid path");
-		require(feeRewardAddress != address(0), "Fee reward address must not be zero address");
-		
-		_feeBurnPct = feeBurnPct;
-		_feeRewardPct = feeRewardPct;
-		_feeRewardSwapPath = feeRewardSwapPath;
-		_feeRewardAddress = feeRewardAddress;
-		
+        require(feeRewardAddress != address(0), "Fee reward address must not be zero address");
+
+        _feeBurnPct = feeBurnPct;
+        _feeRewardPct = feeRewardPct;
+        _feeRewardSwapPath = feeRewardSwapPath;
+        _feeRewardAddress = feeRewardAddress;
+
     }
 
-	function setPair(address a, bool pair) public onlyOwner {
+    function setPair(address a, bool pair) public onlyOwner {
         _pair[a] = pair;
     }
 
-	function setFeeExcluded(address a, bool excluded) public onlyOwner {
+    function setFeeExcluded(address a, bool excluded) public onlyOwner {
         _feeExcluded[a] = excluded;
     }
-    
+
     function mint(address _to, uint256 _amount) public onlyOwner {
         _mint(_to, _amount);
     }
-    
+
     function _beforeTokenTransfer(address sender, address recipient, uint256 amount) internal {
-        
-		LGEWhitelisted._applyLGEWhitelist(sender, recipient, amount);
-		
-        if (sender == address(0)) { // When minting tokens
+
+        LGEWhitelisted._applyLGEWhitelist(sender, recipient, amount);
+
+        if (sender == address(0)) {// When minting tokens
             require(totalSupply().add(amount) <= _cap, "ERC20Capped: cap exceeded");
         }
     }
-	
-	function _transfer(address sender, address recipient, uint256 amount) internal {
+
+    function _transfer(address sender, address recipient, uint256 amount) internal {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
-        
-        require(!(_excluded[sender] || _excluded[recipient]), "ERC20: transfer excluded");
-		
-        _beforeTokenTransfer(sender, recipient, amount);
-		
-		_balances[sender] = _balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
-		
-		if(_pair[recipient] && !_feeExcluded[sender]) {
-			
-			uint256 feeBurnAmount = 0;
-			
-			if(_feeBurnPct > 0) {
-			
-				feeBurnAmount = amount.mul(_feeBurnPct).div(10000);
-				
-				_cap = _cap.sub(feeBurnAmount);
-				_totalSupply = _totalSupply.sub(feeBurnAmount);
-				emit Transfer(sender, address(0), feeBurnAmount);
-				
-			}
-			
-			uint256 feeRewardAmount = 0;
-			
-			if(_feeRewardPct > 0 && _feeRewardAddress != address(0))  {
-			    
-				feeRewardAmount = amount.mul(_feeRewardPct).div(10000);
-				
-				if(_router != address(0)) {
-				    
-    				_balances[address(this)] = _balances[address(this)].add(feeRewardAmount);
-    				
-    				emit Transfer(sender, address(this), feeRewardAmount);
-    				
-    				IUniswapV2Router02 r = IUniswapV2Router02(_router);
-                    
-                    _approve(address(this), _router, feeRewardAmount);
-    
-                    r.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-                        feeRewardAmount,
-                        0,
-                        _feeRewardSwapPath,
-                        _feeRewardAddress,
-                        block.timestamp
-                    );
-                
-				} else {
-				    _balances[_feeRewardAddress] = _balances[_feeRewardAddress].add(feeRewardAmount);
-				    emit Transfer(sender, _feeRewardAddress, feeRewardAmount);
-				}
-				
-			}
-			
-			amount = amount.sub(feeBurnAmount).sub(feeRewardAmount);
-			
-		}
 
-        _balances[recipient] = _balances[recipient].add(amount);
-        emit Transfer(sender, recipient, amount);
+        require(!(_excluded[sender] || _excluded[recipient]), "ERC20: transfer excluded");
+
+        _beforeTokenTransfer(sender, recipient, amount);
+
+        _balances[sender] = _balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
+
+        if (recipient == address(0x000000000000000000000000000000000000dEaD)) {
+            // burn and reduce cap
+            if (sender == owner()) {
+                _totalSupply = _totalSupply.sub(amount);
+                _cap = _cap.sub(amount);
+                _balances[recipient] = _balances[recipient].add(amount);
+                emit Transfer(sender, recipient, amount);
+
+
+            } else {
+                revert("Burn token with owner");
+
+            }
+        } else {
+
+
+            if (_pair[recipient] && !_feeExcluded[sender]) {
+
+                uint256 feeBurnAmount = 0;
+
+                if (_feeBurnPct > 0) {
+
+                    feeBurnAmount = amount.mul(_feeBurnPct).div(10000);
+
+                    _cap = _cap.sub(feeBurnAmount);
+                    _totalSupply = _totalSupply.sub(feeBurnAmount);
+                    emit Transfer(sender, address(0), feeBurnAmount);
+
+                }
+
+                uint256 feeRewardAmount = 0;
+
+                if (_feeRewardPct > 0 && _feeRewardAddress != address(0)) {
+
+                    feeRewardAmount = amount.mul(_feeRewardPct).div(10000);
+
+                    if (_router != address(0)) {
+
+                        _balances[address(this)] = _balances[address(this)].add(feeRewardAmount);
+
+                        emit Transfer(sender, address(this), feeRewardAmount);
+
+                        IUniswapV2Router02 r = IUniswapV2Router02(_router);
+
+                        _approve(address(this), _router, feeRewardAmount);
+
+                        r.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+                            feeRewardAmount,
+                            0,
+                            _feeRewardSwapPath,
+                            _feeRewardAddress,
+                            block.timestamp
+                        );
+
+                    } else {
+                        _balances[_feeRewardAddress] = _balances[_feeRewardAddress].add(feeRewardAmount);
+                        emit Transfer(sender, _feeRewardAddress, feeRewardAmount);
+                    }
+
+                }
+
+                amount = amount.sub(feeBurnAmount).sub(feeRewardAmount);
+
+            }
+
+            _balances[recipient] = _balances[recipient].add(amount);
+            emit Transfer(sender, recipient, amount);
+
+        }
     }
 
     function name() public view override returns (string memory) {
@@ -1121,5 +1178,5 @@ contract SCAR is IERC20, OwnableUpgradeSafe, LGEWhitelisted {
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
-	
+
 }
